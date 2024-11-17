@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseBoolPipe, ParseIntPipe, Post, Query, Req, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, ParseBoolPipe, ParseIntPipe, Post, Query, Req, Res, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Response,Request, response } from 'express';
 import { CreateUserDto } from 'src/users/dtos/CreateUser.dto';
 import { UsersService } from 'src/users/services/users/users.service';
@@ -26,7 +26,10 @@ export class UsersController {
 
     @Get(':id')
     getUserById(@Param('id', ParseIntPipe) id: number) {
-        return this.userService.fetchUserById(id)
+        const user = this.userService.fetchUserById(id)
+        if(!user)
+            throw new HttpException('User not found',HttpStatus.BAD_REQUEST)
+        return user
     }
 
 
